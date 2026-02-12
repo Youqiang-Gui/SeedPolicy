@@ -49,14 +49,17 @@ Please refer to the [RoboTwin Official Documentation](https://robotwin-platform.
 
 # 🧑🏻‍💻 Usage
 
-## 1. Step One
-(Add description for step 1 here)
+## 1. Train Policy
+```bash
+bash train.sh ${task_name} ${task_config} ${expert_data_num} ${seed} ${action_dim} ${gpu_id} ${config_name}
+
+# Example:
+# bash train.sh beat_block_hammer demo_clean 50 0 14 0 train_diffusion_transformer_hybrid_workspace
 
 ## 2. Step Two
 (Add description for step 2 here)
 
-## 3. Step Three
-(Add description for step 3 here)
+
 
 # 👍 Citation
 If you find our work useful, please consider citing:
