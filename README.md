@@ -14,7 +14,7 @@ Youqiang Gui<sup>\*</sup>, Yuxuan Zhou<sup>\*</sup>, Shen Cheng, Xinyang Yuan, H
 # 📚 Overview
 
 ![](./files/framework.png)
-<div align="center">
+<div align="left">
     <i>
     <b>Overview of the SeedPolicy framework.</b> 
     The system takes current RGB images and joint poses as input, encoding them via a ResNet Encoder. 
