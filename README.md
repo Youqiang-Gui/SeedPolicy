@@ -36,7 +36,7 @@ Youqiang Gui<sup>\*</sup>, Yuxuan Zhou<sup>\*</sup>, Shen Cheng, Xinyang Yuan, H
 </div>
 <br>
 
-We present **SeedPolicy**, a novel framework that leverages self-evolving mechanisms to scale the horizon of diffusion policies for enhanced robotic manipulation capabilities.
+
 
 # 🛠️ Installation
 
