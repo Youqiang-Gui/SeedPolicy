@@ -6,22 +6,26 @@
 
 Youqiang Gui<sup>\*</sup>, Yuxuan Zhou<sup>\*</sup>, Shen Cheng, Xinyang Yuan, Haoqiang Fan, Peng Cheng, Shuaicheng Liu
 
-<!-- Arxiv 链接占位符，等您准备好后替换 href 中的内容 -->
+
 [arXiv](https://arxiv.org/abs/23xx.xxxxx)
 
 </div>
 
 # 📚 Overview
 
-<!-- 第一张图 Framework -->
 ![](./files/framework.png)
 <div align="center">
-    <i>Figure 1: The overall framework of SeedPolicy. (Add your detailed caption here describing the framework flow...)</i>
+    <i>
+    <b>Overview of the SeedPolicy framework.</b> 
+    The system takes current RGB images and joint poses as input, encoding them via a ResNet Encoder. 
+    The core <b>Self-Evolving Gated Attention (SEGA)</b> module (blue box) recursively updates a time-evolving latent state (<i>State t</i>) to capture long-term spatiotemporal dependencies while generating enhanced observation features (<i>EObs<sub>t</sub></i>). 
+    These context-rich features are then fed into the Action Expert, a transformer-based diffusion model, to predict a sequence of future actions.
+    </i>
 </div>
 
 <br>
 
-<!-- 第二张图 SEGA -->
+
 ![](./files/SEGA.png)
 <div align="center">
     <i>Figure 2: Illustration of SEGA. (Add your detailed caption here describing the specific module...)</i>
