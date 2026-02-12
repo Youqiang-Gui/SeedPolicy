@@ -67,13 +67,4 @@ The evaluation results, including videos, will be saved in the eval_result direc
 # 😺 Acknowledge
 Our code is generally built upon: [Diffusion Policy](https://github.com/real-stanford/diffusion_policy), [RoboTwin 2.0](https://github.com/RoboTwin-Platform/RoboTwin). We thank all these authors for their nicely open sourced code and their great contributions to the community.
 
-# 👍 Citation
-If you find our work useful, please consider citing:
 
-```bibtex
-@article{seedpolicy202x,
-  title={SeedPolicy: Horizon Scaling via Self-Evolving Diffusion Policy for Robot Manipulation},
-  author={Gui, Youqiang and Zhou, Yuxuan and Cheng, Shen and Yuan, Xinyang and Fan, Haoqiang and Cheng, Peng and Liu, Shuaicheng},
-  journal={arXiv preprint arXiv:23xx.xxxxx},
-  year={202x}
-}
