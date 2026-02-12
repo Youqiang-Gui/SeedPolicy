@@ -2,14 +2,6 @@
 	SeedPolicy: Horizon Scaling via Self-Evolving Diffusion Policy for Robot Manipulation
 </h1>
 
-<div align="center">
-
-Youqiang Gui<sup>\*</sup>, Yuxuan Zhou<sup>\*</sup>, Shen Cheng, Xinyang Yuan, Haoqiang Fan, Peng Cheng, Shuaicheng Liu
-
-
-[arXiv](https://arxiv.org/abs/23xx.xxxxx)
-
-</div>
 
 # 📚 Overview
 
