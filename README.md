@@ -72,7 +72,7 @@ bash eval.sh ${task_name} ${task_config} ${ckpt_setting} ${expert_data_num} ${se
 The evaluation results, including videos, will be saved in the eval_result directory under the project root.
 
 
-# 😺 Reference
+# 😺 Acknowledge
 Our code is generally built upon: [Diffusion Policy](https://github.com/real-stanford/diffusion_policy), [RoboTwin 2.0](https://github.com/RoboTwin-Platform/RoboTwin). We thank all these authors for their nicely open sourced code and their great contributions to the community.
 
 # 👍 Citation
