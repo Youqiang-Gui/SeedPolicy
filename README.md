@@ -50,16 +50,16 @@ bash train.sh ${task_name} ${task_config} ${expert_data_num} ${seed} ${action_di
 ```
 ## 2. Eval Policy
 ```
-bash eval.sh ${task_name} ${task_config} ${ckpt_setting} ${expert_data_num} ${seed} ${gpu_id}
+bash eval.sh ${task_name} ${task_config} ${ckpt_setting} ${expert_data_num} ${seed} ${gpu_id} ${config_name} ${timestamp}
 
 # Example 1: Standard Evaluation
-# bash eval.sh beat_block_hammer demo_clean demo_clean 50 0 0
+# bash eval.sh beat_block_hammer demo_clean demo_clean 50 0 0 train_diffusion_transformer_hybrid_workspace "'20260106-143723'"
 # This command uses the policy trained on the `demo_clean` setting ($ckpt_setting)
 # and evaluates it using the same `demo_clean` setting ($task_config).
 
 # Example 2: Generalization Evaluation
 # To evaluate a policy trained on the `demo_clean` setting and tested on the `demo_randomized` setting, run:
-# bash eval.sh beat_block_hammer demo_randomized demo_clean 50 0 0
+# bash eval.sh beat_block_hammer demo_randomized demo_clean 50 0 0 train_diffusion_transformer_hybrid_workspace "'20260106-143723'"
 ```
 The evaluation results, including videos, will be saved in the eval_result directory under the project root.
 
