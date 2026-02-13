@@ -65,6 +65,6 @@ The evaluation results, including videos, will be saved in the eval_result direc
 
 
 # 😺 Acknowledge
-Our code is generally built upon: [Diffusion Policy](https://github.com/real-stanford/diffusion_policy), [RoboTwin 2.0](https://github.com/RoboTwin-Platform/RoboTwin). We thank all these authors for their nicely open sourced code and their great contributions to the community.
+Our code is generally built upon: [Diffusion Policy](https://github.com/real-stanford/diffusion_policy) and [RoboTwin 2.0](https://github.com/RoboTwin-Platform/RoboTwin). Specifically, the implementation of our state update code references [CUT3R](https://github.com/CUT3R/CUT3R) and [TTT3R](https://github.com/Inception3D/TTT3R). We thank all these authors for their nicely open sourced code and their great contributions to the community.
 
 
