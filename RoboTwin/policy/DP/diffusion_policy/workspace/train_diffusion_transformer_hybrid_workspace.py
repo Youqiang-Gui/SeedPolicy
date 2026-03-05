@@ -49,9 +49,9 @@ class RobotWorkspace(BaseWorkspace):
         self.model: DiffusionTransformerHybridImagePolicy = hydra.utils.instantiate(cfg.policy)
 
         def count_parameters(model):
-            # 计算总参数量
+
             total_params = sum(p.numel() for p in model.parameters())
-            # 计算可训练参数量
+
             trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
             return total_params, trainable_params
 
@@ -67,7 +67,7 @@ class RobotWorkspace(BaseWorkspace):
         if cfg.training.use_ema:
             self.ema_model = copy.deepcopy(self.model)
 
-        # optimizer（保留 Hybrid 的自定义 param groups）
+        # optimizer
         self.optimizer = self.model.get_optimizer(**cfg.optimizer)
 
         # training state
@@ -110,10 +110,6 @@ class RobotWorkspace(BaseWorkspace):
                 print(f"    - Shape of 'obs.{key}': {value.shape}")     
             print("="*50 + "\n")
 
-        # ==========================================================
-        # !!! 关键修复 !!!
-        # 强制限制 worker 数量。对于全内存 Dataset，多进程会导致内存爆炸(Swap)，
-        # 从而导致训练越来越慢。这里限制最大为 8。
         # ==========================================================
         safe_num_workers = min(cfg.dataloader.num_workers, 8)
         print(f"Config num_workers: {cfg.dataloader.num_workers}, Clamped to safe limit: {safe_num_workers}")
@@ -320,11 +316,6 @@ class RobotWorkspace(BaseWorkspace):
                 self.global_step += 1
                 self.epoch += 1
 
-
-# ====================================================================
-# WrappedDataset：保持不变
-# ====================================================================
-
 class WrappedDataset(torch.utils.data.Dataset):
     def __init__(self, dataset):
         self.dataset = dataset
@@ -338,10 +329,6 @@ class WrappedDataset(torch.utils.data.Dataset):
         data['is_reset'] = is_reset
         return data
 
-
-# ====================================================================
-#  StaggeredEpisodeBatchSampler：新增 min_reset_interval
-# ====================================================================
 
 class StaggeredEpisodeBatchSampler(Sampler):
     def __init__(
@@ -360,7 +347,6 @@ class StaggeredEpisodeBatchSampler(Sampler):
         self.min_reset_interval = min_reset_interval
         self.rng = np.random.default_rng(seed)
 
-        # 1. 获取所有 Episode 的边界
         episode_ids = dataset.get_sampler_episode_ids()
         self.episode_starts = []
 
@@ -373,13 +359,11 @@ class StaggeredEpisodeBatchSampler(Sampler):
             start = end
         self.episode_starts.append((start, len(episode_ids)))
 
-        # 2. 生成所有 offset 链任务
         self.all_chain_tasks = []
         for ep_start, ep_end in self.episode_starts:
             ep_len = ep_end - ep_start
             for offset in range(self.step_size):
                 if ep_start + offset < ep_end:
-                    # ⭐计算 offset 链长度
                     max_chain_len = ((ep_len - offset - 1) // self.step_size) + 1
 
                     self.all_chain_tasks.append({
@@ -405,18 +389,15 @@ class StaggeredEpisodeBatchSampler(Sampler):
         self.rng.shuffle(tasks)
         task_queue = iter(tasks)
 
-        # ⭐随机产生合法 reset 区间 [min, max]
         def sample_reset_interval(max_chain_len):
             hi = min(self.max_reset_interval, max_chain_len)
             lo = self.min_reset_interval
 
             if lo > hi:
-                # 区间无效 → 强制用 lo
                 return lo
 
             return self.rng.integers(lo, hi + 1)
 
-        # 填充一个 slot
         def fill_slot(slot_idx):
             nonlocal tasks, task_queue
 
@@ -430,7 +411,6 @@ class StaggeredEpisodeBatchSampler(Sampler):
             first_idx = task['start'] + task['offset']
             max_chain_len = task['max_chain_len']
 
-            # ⭐随机 reset 间隔
             reset_interval = sample_reset_interval(max_chain_len)
 
             return {
@@ -438,17 +418,14 @@ class StaggeredEpisodeBatchSampler(Sampler):
                 'end': task['end'],
                 'step': self.step_size,
 
-                # reset 控制
                 'just_reset': True,
                 'steps_since_reset': 0,
                 'reset_interval': reset_interval,
                 'max_chain_len': max_chain_len,
             }
 
-        # 初始化所有 slot
         slots = [fill_slot(i) for i in range(self.batch_size)]
 
-        # 生成 batch
         for _ in range(self.num_batches):
 
             batch_indices = []
@@ -464,35 +441,22 @@ class StaggeredEpisodeBatchSampler(Sampler):
                 slot['current_idx'] += slot['step']
                 slot['steps_since_reset'] += 1
 
-                # episode 结束
                 if slot['current_idx'] >= slot['end']:
                     slots[i] = fill_slot(i)
                     continue
 
-                # ⭐达到 reset 区间
                 if slot['steps_since_reset'] >= slot['reset_interval']:
                     slot['just_reset'] = True
                     slot['steps_since_reset'] = 0
 
-                    # ⭐下一个 reset 区间
                     slot['reset_interval'] = sample_reset_interval(slot['max_chain_len'])
 
             yield batch_indices
 
 
-# ====================================================================
-# create_dataloader：加入 min_reset_interval
-# ====================================================================
 def seed_worker(worker_id):
-    # 1. 获取主进程设置的 torch 种子
-    # PyTorch 会自动给每个 worker 分配一个基于基础种子的初始种子
     worker_seed = torch.initial_seed() % 2**32
-    
-    # 2. 用这个种子去初始化 NumPy 的随机状态
-    # 确保 Dataset 里调用的 np.random 产生确定的、不重复的序列
     np.random.seed(worker_seed)
-    
-    # 3. 用这个种子去初始化 Python 原生 random 库的随机状态
     random.seed(worker_seed)
 
 def create_dataloader(
@@ -503,7 +467,7 @@ def create_dataloader(
         seed: int = 0,
         step_size: int = 6,
         max_reset_interval: int = 10,
-        min_reset_interval: int = 10,  # ⭐新增
+        min_reset_interval: int = 10,
 ):
     print("\n" + "=" * 50)
     print("使用全 Episode 交错采样 (Staggered Full Episode Sampler)")
@@ -512,7 +476,6 @@ def create_dataloader(
     print(f"Reset interval range: [{min_reset_interval}, {max_reset_interval}] (随机)")
     print("=" * 50 + "\n")
 
-    # 使用新版 Sampler
     batch_sampler = StaggeredEpisodeBatchSampler(
         dataset=dataset,
         batch_size=batch_size,
