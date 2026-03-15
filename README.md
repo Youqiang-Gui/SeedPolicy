@@ -39,6 +39,13 @@ Please refer to the [RoboTwin Official Documentation](https://robotwin-platform.
 2.  **Data Collection**: Collecting expert demonstrations.
 3.  **Data Processing**: Processing data for Policy/Diffusion Policy (DP) training.
 
+# 🤗 Pre-trained Models
+
+We provide pre-trained model checkpoints for the three typical tasks highlighted in our paper. You can download them directly from our Hugging Face repository:
+
+👉 [**SeedPolicy Model Checkpoints on Hugging Face**](https://huggingface.co/guiyouqiang/SeedPolicy/tree/main)
+
+
 # 🧑🏻‍💻 Usage
 
 ## 1. Train Policy
